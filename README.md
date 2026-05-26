@@ -10,3 +10,7 @@ The Regulated Pure Pursuit Controller contains the following features:
 All heuristic and goal-attainment thresholds were tuned in the field, within an actual obstacle course.
 
 The A* Planner and Smoother contain the following features
+1. Standard A* Implementation using the Octile Heuristic
+2. Post-planning path densificiation to improve path smoothness
+
+It is noteworthy that the path densification process reduces the overall influence of the smoother on path smoothness by reducing the physical coverage of the smoother window. Assuming a fixed path density, a larger smoothing window would create a path with much more gradual curvature changes, but simultaneously reduce obstacle acknowledgement in the path structure. Heightening the polynomial order acts against the intention of smoothing by overfitting the path to the pre-smoothing coordinates. Therefore an ideal smoother configuration comprises a moderate to large window size with low polynomial ordering. 
