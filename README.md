@@ -1,1 +1,13 @@
 # EE4308-Scripts
+
+This package implements a ROS2 State estimation, control and path planning package for a UAV Quadcopter.
+
+State estimation is undertaken via an extended Kalman Filter applied on the x, y, z and yaw states of a simulated UAV. The IMU serves as our primary prediction stage reading pipeline for all state variables, and Correction stage advances are made through Barometer, Magnetometer, GPS and Sonar readings. 
+
+Primary refinements implemented include the restoration of the covariance matrix's symmetry after all predictions and corrections through the addition of its transpose to itself, and the subsequent halving of the sum, which is mathematically equivalent to averaging every element of the square covariance matrix with its counterpart across the symmetry line. This is as the covariance matrix is inherently symmetric, and deviations from this due to erratic sensor inputs would damage the robustness of the EKF model. Essentially, as the EKF model is the optimisation of a probability in each correction step, an asymmetric covariance matrix encourages or signals a deviation from optimality.
+
+GPS, barometer and sonar readings correct z-axis predictions. GPS corrects x and y values, and the magnetometer exclusively corrects yaw values. 
+
+Our primary observations were that x and y prediction and correction was notably imprecise, likely due to the absence of more than one sensors to correct these particular coordinates in the prediction stage. Variance was estimated from data at stasis to be very small at first for GPS x and y values, indicating high sensor reading reliability. However, these variance values did not provide satisfactory performance during movement, and had to consequently be tuned up. While this improved accuracy, jittery was a consistent observation, and could not be rectified within the scope of the project for want of a more reliable sensor suite. 
+
+Z axis estimations were very precise, updated with low latency and were also very accurate. The primary concerns in this project were that sonar readings could be interrupted by objects disrupting the line of sight between the UAV and the ground. As a consequence, while sonar provides very accurate results in clear areas, high dependency on it for correction (represented by a small covariance value) would elevate this risk. This risk was discovered on a z vs time plot collected directly from the simulated sensor. By tuning the covariance of sonar measurements up, and also involving the barometer in state estimation, significant and evidently unrepresentative deviations in z axis corrected readings were mitigated significantly.
